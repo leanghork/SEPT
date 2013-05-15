@@ -16,43 +16,19 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DrawingBoard 
 	extends JPanel
 {
-	public static final int clear = 0;
-	public static final int rectangle = 1;
-	public static final int circle = 2;
-	public static final int line = 3;
-	
-	private int draw = circle;
-	static int count = 1;
 	Dimension size = null;
 	int zoom = 100;
 	File svg = null;
 	public LinkedList<PolyObj> shapes = new LinkedList<PolyObj>();
-	
-	
-	public DrawingBoard()
-	{
-		svg = new File("New File "+(count++));
 		
-		size = new Dimension(500,500);
-		setSize();
-		this.addMouseListener(new MouseController(this));
-	}
-	
 	public DrawingBoard(File f)
 	{
 		this.svg = f;
 		readFile(svg);
 		initSize();
-		setSize();
-		
-		this.addMouseListener(new MouseController(this));
+		setSize();		
 	}
-	
-	public int getOption()
-	{
-		return draw;
-	}
-		
+			
 	public int getZoom()
 	{
 		return zoom;

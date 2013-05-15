@@ -5,10 +5,20 @@ import java.io.*;
 
 import javax.swing.*;
 
+import controller.MouseController;
+
 public class Model 
 	extends JFrame
 {
-	LinkedList<File> svgFiles = new LinkedList<File>();
+	public static final int clear = 0;
+	public static final int rectangle = 1;
+	public static final int circle = 2;
+	public static final int line = 3;
+	
+	private int draw = circle;
+	private LinkedList<File> svgFiles = new LinkedList<File>();
+	
+	private static int newFileCount = 1;
 	
 	public Model()
 	{	
@@ -27,30 +37,23 @@ public class Model
 		
 		System.out.println("Size: "+svgFiles.size());
 	}
-	
-	public LinkedList<File> getFileList()
-	{
-		return svgFiles;
-	}
-	
+		
 	public LinkedList<DrawingBoard> getBoard()
 	{
 		LinkedList<DrawingBoard> board = new LinkedList<DrawingBoard>();
 		
 		for(int i=0; i<svgFiles.size();i++)
 		{
-			if(svgFiles.get(i)!=null)
-				board.add(new DrawingBoard(svgFiles.get(i)));
-			else
-				board.add(new DrawingBoard());
+			board.add(new DrawingBoard(svgFiles.get(i)));
+			board.getLast().addMouseListener(new MouseController(board.getLast(),this));
 		}
 		
 		return board;
 	}
 	
 	public void addEmptyBoard()
-	{
-		svgFiles.add(null);
+	{		
+		svgFiles.add(new File("New File "+Integer.toString(newFileCount++)));
 	}
 	
 	public boolean openFile(File f)
@@ -91,5 +94,15 @@ public class Model
 		}
 		
 		return true;
+	}
+
+	public void setOption(int option)
+	{
+		this.draw = option;
+	}
+	
+	public int getOption()
+	{
+		return draw;
 	}
 }

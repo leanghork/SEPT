@@ -9,11 +9,13 @@ import java.awt.geom.*;
 public class MouseController 
 	implements MouseListener 
 {
+	private Model model;
 	private DrawingBoard theBoard;
 	private int startX, startY, endX, endY;
 	
-	public MouseController(DrawingBoard theBoard)
+	public MouseController(DrawingBoard theBoard,Model model)
 	{
+		this.model = model;
 		this.theBoard = theBoard;
 	}
 	
@@ -28,7 +30,7 @@ public class MouseController
 		this.endX = e.getX()-50;
 		this.endY = e.getY()-50;
 		
-		if(theBoard.getOption() == DrawingBoard.rectangle)
+		if(model.getOption() == Model.rectangle)
 		{
 			if(endX<startX)
 			{
@@ -50,7 +52,7 @@ public class MouseController
 			theBoard.addShape(new PolyObj(r,2,Color.gray,Color.blue));	
 		}
 		
-		else if(theBoard.getOption() == DrawingBoard.circle)
+		else if(model.getOption() == Model.circle)
 		{
 			double width = Math.abs(startX-endX);
 			double height = Math.abs(startY-endY);
@@ -59,7 +61,7 @@ public class MouseController
 			Ellipse2D.Double c = new Ellipse2D.Double(startX-radius, startY-radius, 2*radius, 2*radius);
 			theBoard.addShape(new PolyObj(c,2,Color.blue,Color.cyan));
 		}
-		else if(theBoard.getOption() == DrawingBoard.line)
+		else if(model.getOption() == Model.line)
 		{
 			Line2D.Double l = new Line2D.Double(startX, startY, endX, endY);
 			theBoard.addShape(new PolyObj(l,2,null,Color.cyan));

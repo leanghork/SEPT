@@ -76,21 +76,25 @@ public class View
 		select.setToolTipText("Select");
 		select.setActionCommand("select");
 		select.setFocusable(false);
+		select.addActionListener(new ToolbarActionController(svg));
 		
 		JButton circle = new JButton(new ImageIcon("src/icon/draw-ellipse-icon.png"));
 		circle.setToolTipText("Draw Circle");
 		circle.setActionCommand("circle");
 		circle.setFocusable(false);
+		circle.addActionListener(new ToolbarActionController(svg));
 		
 		JButton rect = new JButton(new ImageIcon("src/icon/rect.png"));
 		rect.setToolTipText("Draw Rectangle");
 		rect.setActionCommand("rect");
 		rect.setFocusable(false);
+		rect.addActionListener(new ToolbarActionController(svg));
 		
 		JButton line = new JButton(new ImageIcon("src/icon/line.png"));
 		line.setToolTipText("Draw Line");
 		line.setActionCommand("line");
 		line.setFocusable(false);
+		line.addActionListener(new ToolbarActionController(svg));
 		
 		JButton group = new JButton(new ImageIcon("src/icon/group.png"));
 		group.setToolTipText("Group");
