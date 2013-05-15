@@ -22,15 +22,6 @@ public class View
 	{
 		this.svg=svg;
 		
-		try 
-		{
-			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-		} 
-		catch (Exception e) 
-		{
-			
-		}
-		
 		setMenu();
 		setTab();
 		addToFrame();

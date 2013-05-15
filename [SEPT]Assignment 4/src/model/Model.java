@@ -15,7 +15,7 @@ public class Model
 	public static final int circle = 2;
 	public static final int line = 3;
 	
-	private int draw = circle;
+	private int draw = clear;
 	private LinkedList<File> svgFiles = new LinkedList<File>();
 	
 	private static int newFileCount = 1;

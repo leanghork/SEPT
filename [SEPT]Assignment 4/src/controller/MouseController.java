@@ -65,14 +65,16 @@ public class MouseController
 		{
 			Line2D.Double l = new Line2D.Double(startX, startY, endX, endY);
 			theBoard.addShape(new PolyObj(l,2,null,Color.cyan));
-		}
-		
+		}		
 		
 	}
 	
 	public void mouseClicked(MouseEvent e) 
 	{
-
+		if(model.getOption() == Model.clear)
+		{
+			theBoard.selectShape(e.getX()-50, e.getY()-50);
+		}
 	}
 
 	public void mouseEntered(MouseEvent e) 

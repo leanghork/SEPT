@@ -20,6 +20,7 @@ public class DrawingBoard
 	int zoom = 100;
 	File svg = null;
 	public LinkedList<PolyObj> shapes = new LinkedList<PolyObj>();
+	public LinkedList<PolyObj> select = new LinkedList<PolyObj>();
 		
 	public DrawingBoard(File f)
 	{
@@ -27,6 +28,48 @@ public class DrawingBoard
 		readFile(svg);
 		initSize();
 		setSize();		
+	}
+	
+	public void selectShape(int startX, int startY)
+	{
+		Point2D.Double p = new Point2D.Double(startX,startY);
+		
+		for(int i = shapes.size()-1; i>=0; i--)
+		{
+			select.clear();
+			
+			if(shapes.get(i).shape instanceof Rectangle2D)
+			{
+				Rectangle2D.Double check = (Rectangle2D.Double)(shapes.get(i).shape);
+				
+				if(check.contains(p))
+				{
+					shapes.get(i).setSelected();
+					select.add(shapes.get(i));
+					refresh();
+					break;
+				}
+			}
+			
+			if(shapes.get(i).shape instanceof Ellipse2D)
+			{
+				Ellipse2D.Double check = (Ellipse2D.Double)(shapes.get(i).shape);
+				
+				if(check.contains(p))
+				{
+					shapes.get(i).setSelected();
+					select.add(shapes.get(i));
+					refresh();
+					break;
+				}
+			}
+			
+		}
+	}
+	
+	public void selectShape(int startX, int startY, int endX, int endY)
+	{
+		
 	}
 			
 	public int getZoom()
@@ -141,6 +184,7 @@ public class DrawingBoard
 				g.setColor(drawShape.stroke);
 				g.setStroke(new BasicStroke(drawShape.strokeWidth));	
 				g.draw(drawShape.shape);	
+				
 			}
 			else if(drawShape.shape instanceof Ellipse2D || drawShape.shape instanceof Rectangle2D)
 			{				
@@ -149,7 +193,55 @@ public class DrawingBoard
 				g.draw(drawShape.shape);				
 				g.setColor(drawShape.fill);
 				g.fill(drawShape.shape);
-			}			
+			}	
+		}
+					
+		for(int i=0;i<select.size();i++)
+		{			
+			PolyObj drawShape = (PolyObj)(select.get(i));
+			
+			g.setPaint(Color.black);
+			//g.setStroke(new BasicStroke(50));
+			g.draw(drawShape.shape);
+			
+			if(drawShape.shape instanceof Line2D)
+			{			
+				int x1 = (int)((Line2D.Double)(shapes.get(i).shape)).getX1();
+				int y1 = (int)((Line2D.Double)(shapes.get(i).shape)).getY1();	
+				int x2 = (int)((Line2D.Double)(shapes.get(i).shape)).getX2();
+				int y2 = (int)((Line2D.Double)(shapes.get(i).shape)).getY2();
+				
+				g.fill(new Rectangle2D.Double(x1 - 5.0, y1 - 5.0, 10.0, 10.0));
+				g.fill(new Rectangle2D.Double(x2 - 5.0, y2 - 5.0, 10.0, 10.0));
+			}
+			else if(drawShape.shape instanceof Rectangle2D)
+			{				
+				int x = (int)((Rectangle2D.Double)(shapes.get(i).shape)).getX();
+				int y = (int)((Rectangle2D.Double)(shapes.get(i).shape)).getY();	
+				int w = (int)((Rectangle2D.Double)(shapes.get(i).shape)).getWidth();
+				int h = (int)((Rectangle2D.Double)(shapes.get(i).shape)).getHeight();
+				
+				g.fill(new Rectangle2D.Double(x - 5.0, y - 5.0, 10.0, 10.0));
+		        g.fill(new Rectangle2D.Double(x + w * 0.5 - 5.0, y - 5.0, 10.0, 10.0));
+		        g.fill(new Rectangle2D.Double(x + w - 5.0, y - 5.0, 10.0, 10.0));
+		        g.fill(new Rectangle2D.Double(x - 5.0, y + h * 0.5 - 5.0, 10.0, 10.0));
+			    g.fill(new Rectangle2D.Double(x + w - 5.0, y + h * 0.5 - 5.0, 10.0, 10.0));
+			    g.fill(new Rectangle2D.Double(x - 5.0, y + h - 5.0, 10.0, 10.0));
+			    g.fill(new Rectangle2D.Double(x + w * 0.5 - 5.0, y + h - 5.0, 10.0, 10.0));
+			    g.fill(new Rectangle2D.Double(x + w - 5.0, y + h - 5.0, 10.0, 10.0));
+			}		
+			else if(drawShape.shape instanceof Ellipse2D)
+			{
+				int x = (int)((Ellipse2D.Double)(shapes.get(i).shape)).getX();
+				int y = (int)((Ellipse2D.Double)(shapes.get(i).shape)).getY();	
+				int w = (int)((Ellipse2D.Double)(shapes.get(i).shape)).getWidth();
+				int h = (int)((Ellipse2D.Double)(shapes.get(i).shape)).getHeight();
+				
+				g.fill(new Rectangle2D.Double(x - 5.0, y - 5.0, 10.0, 10.0));
+		        g.fill(new Rectangle2D.Double(x + w - 5.0, y - 5.0, 10.0, 10.0));
+			    g.fill(new Rectangle2D.Double(x - 5.0, y + h - 5.0, 10.0, 10.0));
+			    g.fill(new Rectangle2D.Double(x + w - 5.0, y + h - 5.0, 10.0, 10.0));
+			}
 		}
 
 	}
