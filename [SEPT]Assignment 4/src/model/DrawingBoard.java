@@ -32,16 +32,17 @@ public class DrawingBoard
 	{
 		svg = new File("New File "+(count++));
 		
-		this.addMouseListener(new MouseController(this));
+		//this.addMouseListener(new MouseController(this));
 	}
 	
 	public DrawingBoard(File f)
 	{
 		this.svg = f;
 		readFile(svg);
+		initSize();
 		setSize();
 		
-		this.addMouseListener(new MouseController(this));
+		//this.addMouseListener(new MouseController(this));
 	}
 	
 	public int getZoom()
@@ -51,7 +52,6 @@ public class DrawingBoard
 	
 	public Dimension getBoardSize()
 	{
-		
 		return new Dimension((int)size.getWidth()*zoom/100,(int)size.getHeight()*zoom/100);
 	}
 	
@@ -65,11 +65,56 @@ public class DrawingBoard
 		return this;
 	}
 	
-	private void setSize()
+	private void initSize()
 	{
-		Dimension bSize = new Dimension((int)(size.getWidth()*zoom/100),(int)(size.getHeight()*zoom/100));
+		int maxX = 0;
+		int maxY = 0;
 		
+		for(int i=0;i<shapes.size();i++)
+		{			
+			if(shapes.get(i).shape instanceof Rectangle2D)
+			{
+				maxX = (int)((Rectangle2D.Double)shapes.get(i).shape).getMaxX();
+				maxY = (int)((Rectangle2D.Double)shapes.get(i).shape).getMaxY();
+			}
+			
+			if(shapes.get(i).shape instanceof Ellipse2D)
+			{
+				maxX = (int)((Ellipse2D.Double)shapes.get(i).shape).getMaxX();
+				maxY = (int)((Ellipse2D.Double)shapes.get(i).shape).getMaxY();
+			}
+			
+			if(shapes.get(i).shape instanceof Line2D)
+			{
+				maxX = (int)((Line2D.Double)shapes.get(i).shape).getX1();
+				
+				if(maxX < (int)((Line2D.Double)shapes.get(i).shape).getX2())
+					maxX = (int)((Line2D.Double)shapes.get(i).shape).getX2();
+				
+				maxY = (int)((Line2D.Double)shapes.get(i).shape).getY1();
+								
+				if(maxY < (int)((Line2D.Double)shapes.get(i).shape).getY2())
+					maxY = (int)((Line2D.Double)shapes.get(i).shape).getY2();
+			}
+			
+			if(size.getWidth() > maxX)
+				maxX = (int)size.getWidth();
+			if(size.getHeight() > maxY)
+				maxY = (int)size.getHeight();
+			
+			size = new Dimension(maxX,maxY);
+		}
+		
+		size = new Dimension(maxX+100,maxY+100);
+			
+	}
+	
+	private void setSize()
+	{		
+		Dimension bSize = new Dimension((int)(size.getWidth()*zoom/100),(int)(size.getHeight()*zoom/100));
+	
 		this.setPreferredSize(bSize);
+		this.refresh();
 	}
 	
 	public void setZoom(int newZoom)
@@ -78,12 +123,7 @@ public class DrawingBoard
 		setSize();
 		refresh();
 	}
-	private int sadd ;
-	public void setCurrent(int wateva)
-	{
 		
-	}
-	
 	public void addShape(PolyObj drawObj)
 	{
 		shapes.add(drawObj);
@@ -99,24 +139,23 @@ public class DrawingBoard
 	
 	public void paintComponent(Graphics gg)
 	{			
-		Rectangle2D.Double r = new Rectangle2D.Double(10, 10, 10, 10); 
-		addShape(new PolyObj(r,1,Color.black,Color.black));
-		
 		Graphics2D g = (Graphics2D)gg;
 		
 		g.scale(zoom/100, zoom/100);
 		
 		g.setColor(ColorObj.getRGBColor("white"));
 		g.fillRect(0, 0, (int)size.getWidth(), (int)size.getHeight());
+			
+		g.translate(50,50);
 		
 		for(int i=0;i<shapes.size();i++)
 		{
 			PolyObj drawShape = (PolyObj)(shapes.get(i));
 			
 			if(drawShape.shape instanceof Line2D)
-			{
+			{			
 				g.setColor(drawShape.stroke);
-				g.setStroke(new BasicStroke(drawShape.strokeWidth));				
+				g.setStroke(new BasicStroke(drawShape.strokeWidth));	
 				g.draw(drawShape.shape);	
 			}
 			else if(drawShape.shape instanceof Ellipse2D || drawShape.shape instanceof Rectangle2D)
@@ -126,22 +165,27 @@ public class DrawingBoard
 				g.draw(drawShape.shape);				
 				g.setColor(drawShape.fill);
 				g.fill(drawShape.shape);
-			}
+			}			
 		}
+
 	}
 	
 	private void readFile(File f)
 	{
 		try
-		{
+		{			
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = factory.newSAXParser();
 			
 			DefaultHandler handler = new DefaultHandler()
 			{
+				LinkedList<Integer> gStrokeWidth = new LinkedList<Integer>();
+				LinkedList<Color> gStroke = new LinkedList<Color>();
+				LinkedList<Color> gFill = new LinkedList<Color>();
+				
 				public void startElement(String uri,String localName, String qName, Attributes attributes)
-				{
-					if(qName.equals("svg"))
+				{					
+					if(qName.equalsIgnoreCase("svg"))
 					{
 						int width=0, height=0;
 						
@@ -153,30 +197,87 @@ public class DrawingBoard
 						size = new Dimension(width,height);
 					}
 					
-					if(qName.equals("rect"))
+					if(qName.equalsIgnoreCase("g"))
+					{
+						int strokeWidth = -1;
+						Color fill = null;
+						Color stroke = null;
+						
+						
+						if(attributes.getValue("stroke-width")!= null)
+							strokeWidth = unitConvert(attributes.getValue("strokeWidth"));
+						
+						if(attributes.getValue("stroke")!=null)
+							stroke = ColorObj.getRGBColor(attributes.getValue("stroke"));
+						
+						if(attributes.getValue("fill")!=null)
+							fill = ColorObj.getRGBColor(attributes.getValue("fill"));
+						
+						gStrokeWidth.add(strokeWidth);
+						gStroke.add(stroke);
+						gFill.add(fill);						
+					}
+					
+					if(qName.equalsIgnoreCase("rect"))
 					{
 						int x=0,y=0,width=0,height=0,strokeWidth=0;
 						Color fill=null,stroke=null;
 						
 						if(attributes.getValue("x")!=null)
-							x = unitConvert(attributes.getValue("x"));
+							x = unitConvert(attributes.getValue("x"));						
 						if(attributes.getValue("y")!=null)
 							y = unitConvert(attributes.getValue("y"));
 						if(attributes.getValue("width")!=null)
 							width=unitConvert(attributes.getValue("width"));
 						if(attributes.getValue("height")!=null)
 							height=unitConvert(attributes.getValue("height"));
+						
 						if(attributes.getValue("stroke-width")!=null)
 							strokeWidth=unitConvert(attributes.getValue("stroke-width"));
+						else if(attributes.getValue("stroke-width")==null)
+						{
+							for(int i=gStrokeWidth.size()-1;i>=0;i--)
+							{
+								if(gStrokeWidth.get(i) != -1)
+								{
+									strokeWidth = gStrokeWidth.get(i);
+									break;
+								}
+							}
+						}
+						
 						if(attributes.getValue("fill")!=null)
 							fill = ColorObj.getRGBColor(attributes.getValue("fill"));
+						else if(attributes.getValue("fill") == null)
+						{
+							for(int i=gFill.size()-1;i>=0;i--)
+							{
+								if(gFill.get(i) != null)
+								{
+									fill = gFill.get(i);
+									break;
+								}
+							}
+						}
+						
 						if(attributes.getValue("stroke")!=null)
 							stroke = ColorObj.getRGBColor(attributes.getValue("stroke"));
+						else if(attributes.getValue("stroke") == null)
+						{
+							for(int i=gStroke.size()-1;i>=0;i--)
+							{
+								if(gStroke.get(i) != null)
+								{
+									stroke = gStroke.get(i);
+									break;
+								}
+							}
+						}
 						
 						shapes.add(new PolyObj(new Rectangle2D.Double(x, y, width, height), strokeWidth, fill, stroke));
 					}
 					
-					else if(qName.equals("circle"))
+					else if(qName.equalsIgnoreCase("circle"))
 					{
 						int x=0,y=0,r=0,strokeWidth=0;
 						Color fill=null, stroke=null;
@@ -187,20 +288,56 @@ public class DrawingBoard
 							y = unitConvert(attributes.getValue("cy"));
 						if(attributes.getValue("r")!=null)
 							r = unitConvert(attributes.getValue("r"));
+						
 						if(attributes.getValue("stroke-width")!=null)
 							strokeWidth=unitConvert(attributes.getValue("stroke-width"));
+						else if(attributes.getValue("stroke-width")==null)
+						{
+							for(int i=gStrokeWidth.size()-1;i>=0;i--)
+							{
+								if(gStrokeWidth.get(i) != -1)
+								{
+									strokeWidth = gStrokeWidth.get(i);
+									break;
+								}
+							}
+						}
+						
 						if(attributes.getValue("fill")!=null)
 							fill = ColorObj.getRGBColor(attributes.getValue("fill"));
+						else if(attributes.getValue("fill") == null)
+						{
+							for(int i=gFill.size()-1;i>=0;i--)
+							{
+								if(gFill.get(i) != null)
+								{
+									fill = gFill.get(i);
+									break;
+								}
+							}
+						}
+						
 						if(attributes.getValue("stroke")!=null)
 							stroke = ColorObj.getRGBColor(attributes.getValue("stroke"));
+						else if(attributes.getValue("stroke") == null)
+						{
+							for(int i=gStroke.size()-1;i>=0;i--)
+							{
+								if(gStroke.get(i) != null)
+								{
+									stroke = gStroke.get(i);
+									break;
+								}
+							}
+						}
 						
 						shapes.add(new PolyObj(new Ellipse2D.Double(x-r, y-r, 2*r, 2*r), strokeWidth, fill, stroke));
 					}
 					
-					else if(qName.equals("line"))
-					{
+					else if(qName.equalsIgnoreCase("line"))
+					{					
 						int x1=0,y1=0,x2=0,y2=0,strokeWidth=0;
-						Color stroke = Color.BLACK;
+						Color stroke = null;
 						
 						if(attributes.getValue("x1")!=null)
 							x1 = unitConvert(attributes.getValue("x1"));
@@ -210,13 +347,49 @@ public class DrawingBoard
 							x2 = unitConvert(attributes.getValue("x2"));
 						if(attributes.getValue("y2")!=null)
 							y2 = unitConvert(attributes.getValue("y2"));
+						
 						if(attributes.getValue("stroke-width")!=null)
 							strokeWidth=unitConvert(attributes.getValue("stroke-width"));
+						else if(attributes.getValue("stroke-width")==null)
+						{
+							for(int i=gStrokeWidth.size()-1;i>=0;i--)
+							{
+								if(gStrokeWidth.get(i) != -1)
+								{
+									strokeWidth = gStrokeWidth.get(i);
+									break;
+								}
+							}
+						}
+						
 						if(attributes.getValue("stroke")!=null)
+						{
 							stroke = ColorObj.getRGBColor(attributes.getValue("stroke"));
+						}
+						else if(attributes.getValue("stroke") == null)
+						{
+							for(int i=gStroke.size()-1;i>=0;i--)
+							{
+								if(gStroke.get(i) != null)
+								{
+									stroke = gStroke.get(i);
+									break;
+								}
+							}
+						}
 						
 						shapes.add(new PolyObj(new Line2D.Double(x1, y1, x2, y2), strokeWidth, null, stroke));
 					}
+				}
+				
+				public void endElement(String uri, String localName, String qName)
+				{
+					/*if(qName.equalsIgnoreCase("g"))
+					{
+						gStrokeWidth.removeLast();
+						gStroke.removeLast();
+						gFill.removeLast();
+					}*/
 				}
 				
 			};
