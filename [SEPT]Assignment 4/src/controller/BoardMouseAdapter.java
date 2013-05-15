@@ -29,7 +29,7 @@ public class BoardMouseAdapter
 	
 	public void mouseDragged(MouseEvent e)
 	{
-		Line2D.Double l = new Line2D.Double(e.getX()-45, e.getY()-45, e.getPoint().getX()-45, e.getPoint().getY()-45);
+		Line2D.Double l = new Line2D.Double(e.getX()-50, e.getY()-50, e.getPoint().getX()-50, e.getPoint().getY()-50);
 		theBoard.addShape(new PolyObj(l,2,null,Color.cyan));
 	}
 	

@@ -10,7 +10,7 @@ public class MouseController
 	implements MouseListener 
 {
 	private DrawingBoard theBoard;
-	private Point2D.Double start, end;
+	private int startX, startY, endX, endY;
 	
 	public MouseController(DrawingBoard theBoard)
 	{
@@ -19,31 +19,36 @@ public class MouseController
 	
 	public void mousePressed(MouseEvent e) 
 	{
-		start = (Point2D.Double)this.getCoordinate(e.getX(), e.getY());
+		this.startX = e.getX()-50;
+		this.startY = e.getY()-50;
 	}
 
 	public void mouseReleased(MouseEvent e) 
 	{
-		end = (Point2D.Double)this.getCoordinate(e.getX(), e.getY());		
+		this.endX = e.getX()-50;
+		this.endY = e.getY()-50;
 		
 		if(theBoard.getOption() == DrawingBoard.rectangle)
 		{
-			double height = Math.abs(start.getY() - end.getY());
-			double width = Math.abs(start.getX() - end.getX());
-			
-			Rectangle2D.Double r = new Rectangle2D.Double(start.getX(), start.getY(), width, height); 	
+			double width = Math.abs(startX-endX);
+			double height = Math.abs(startY-endY);
+						
+			Rectangle2D.Double r = new Rectangle2D.Double(startX, startY, width, height); 	
 			theBoard.addShape(new PolyObj(r,2,Color.gray,Color.blue));	
 		}
 		
 		else if(theBoard.getOption() == DrawingBoard.circle)
 		{
-			double r = Math.sqrt((start.getY()-end.getY())*(start.getY()-end.getY()) + (start.getX()-end.getX())*(start.getX()-end.getX()));
-			Ellipse2D.Double c = new Ellipse2D.Double(start.getX()-r, start.getY()-r, 2*r, 2*r);
+			double width = Math.abs(startX-endX);
+			double height = Math.abs(startY-endY);
+			double radius = Math.sqrt((width*width)+(height*height)); 
+			
+			Ellipse2D.Double c = new Ellipse2D.Double(startX, startY, 2*radius, 2*radius);
 			theBoard.addShape(new PolyObj(c,2,Color.blue,Color.cyan));
 		}
 		else if(theBoard.getOption() == DrawingBoard.line)
 		{
-			Line2D.Double l = new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY());
+			Line2D.Double l = new Line2D.Double(startX, startY, endX, endY);
 			theBoard.addShape(new PolyObj(l,2,null,Color.cyan));
 		}
 		
