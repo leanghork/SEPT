@@ -21,6 +21,7 @@ public class DrawingBoard
 	public static final int circle = 2;
 	public static final int line = 3;
 	
+	private int draw = clear;
 	static int count = 1;
 	Dimension size = null;
 	int zoom = 100;
@@ -45,6 +46,11 @@ public class DrawingBoard
 		//this.addMouseListener(new MouseController(this));
 	}
 	
+	public int getOption()
+	{
+		return draw;
+	}
+		
 	public int getZoom()
 	{
 		return zoom;
