@@ -8,7 +8,8 @@ import java.awt.*;
 import javax.swing.*;
 
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
+import java.util.*;
 
 public class View 
 	extends JFrame
@@ -20,11 +21,16 @@ public class View
 	public View(Model svg)
 	{
 		this.svg=svg;
-		try {
+		
+		try 
+		{
 			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (Exception e) 
+		{
+			
 		}
+		
 		setMenu();
 		setTab();
 		addToFrame();
@@ -65,50 +71,56 @@ public class View
 	}
 	
 	public JToolBar createToolBar()
-	{
-		JButton select,circle,rect,line,group,unGroup,delete,strokeCol,strokeWidth,fill;
-		
-		select = new JButton(new ImageIcon("src/icon/select.png"));
+	{		
+		JButton select = new JButton(new ImageIcon("src/icon/select.png"));
 		select.setToolTipText("Select");
-		
-		circle = new JButton(new ImageIcon("src/icon/draw-ellipse-icon.png"));
-		circle.setToolTipText("Draw Circle");
-		
-		rect = new JButton(new ImageIcon("src/icon/rect.png"));
-		rect.setToolTipText("Draw Rectangle");
-		
-		line = new JButton(new ImageIcon("src/icon/line.png"));
-		line.setToolTipText("Draw Line");
-		
-		group = new JButton(new ImageIcon("src/icon/group.png"));
-		group.setToolTipText("Group");
-		
-		unGroup = new JButton(new ImageIcon("src/icon/un.png"));
-		unGroup.setToolTipText("un-Group");
-		
-		delete = new JButton(new ImageIcon("src/icon/delete.png"));
-		delete.setToolTipText("Delete");
-		
-		strokeCol = new JButton(new ImageIcon("src/icon/strokeC.png"));
-		strokeCol.setToolTipText("Stroke Color");
-		
-		strokeWidth = new JButton(new ImageIcon("src/icon/strokeW.png"));
-		strokeWidth.setToolTipText("Stroke Width");
-		
-		fill = new JButton(new ImageIcon("src/icon/fill.png"));
-		fill.setToolTipText("Fill");
-		
 		select.setActionCommand("select");
-		circle.setActionCommand("circle");
-		rect.setActionCommand("rect");
-		line.setActionCommand("line");
-		group.setActionCommand("group");
-		unGroup.setActionCommand("unGroup");
-		delete.setActionCommand("delete");
-		strokeCol.setActionCommand("strokeCol");
-		strokeWidth.setActionCommand("strokeWidth");
-		fill.setActionCommand("fill");
+		select.setFocusable(false);
 		
+		JButton circle = new JButton(new ImageIcon("src/icon/draw-ellipse-icon.png"));
+		circle.setToolTipText("Draw Circle");
+		circle.setActionCommand("circle");
+		circle.setFocusable(false);
+		
+		JButton rect = new JButton(new ImageIcon("src/icon/rect.png"));
+		rect.setToolTipText("Draw Rectangle");
+		rect.setActionCommand("rect");
+		rect.setFocusable(false);
+		
+		JButton line = new JButton(new ImageIcon("src/icon/line.png"));
+		line.setToolTipText("Draw Line");
+		line.setActionCommand("line");
+		line.setFocusable(false);
+		
+		JButton group = new JButton(new ImageIcon("src/icon/group.png"));
+		group.setToolTipText("Group");
+		group.setActionCommand("group");
+		group.setFocusable(false);
+		
+		JButton ungroup = new JButton(new ImageIcon("src/icon/un.png"));
+		ungroup.setToolTipText("ungroup");
+		ungroup.setActionCommand("ungroup");
+		ungroup.setFocusable(false);
+		
+		JButton delete = new JButton(new ImageIcon("src/icon/delete.png"));
+		delete.setToolTipText("Delete");
+		delete.setActionCommand("delete");
+		delete.setFocusable(false);
+		
+		JButton stroke = new JButton(new ImageIcon("src/icon/strokeC.png"));
+		stroke.setToolTipText("Stroke Color");
+		stroke.setActionCommand("stroke");
+		stroke.setFocusable(false);
+		
+		JButton strokeWidth = new JButton(new ImageIcon("src/icon/strokeW.png"));
+		strokeWidth.setToolTipText("Stroke Width");
+		strokeWidth.setActionCommand("strokeWidth");
+		strokeWidth.setFocusable(false);
+		
+		JButton fill = new JButton(new ImageIcon("src/icon/fill.png"));
+		fill.setToolTipText("Fill");
+		fill.setActionCommand("fill");
+		fill.setFocusable(false);
 		
 		JToolBar toolB = new JToolBar("Tools", SwingConstants.VERTICAL);
 		
@@ -117,10 +129,10 @@ public class View
 		toolB.add(rect);
 		toolB.add(line);
 		toolB.add(group);
-		toolB.add(unGroup);
+		toolB.add(ungroup);
 		toolB.add(delete);
 		toolB.add(strokeWidth);
-		toolB.add(strokeCol);
+		toolB.add(stroke);
 		toolB.add(fill);
 
 		return toolB;
@@ -128,7 +140,22 @@ public class View
 	
 	public void newFile()
 	{
+		svg.addEmptyBoard();
 		
+		DrawingBoard db = (DrawingBoard)svg.getBoard().getLast();
+		String title = db.getFileName();
+								
+		JScrollPane sp = new JScrollPane();
+		JViewport vp = sp.getViewport();
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		panel.add(db.getPanel());
+		
+		vp.add(panel);		
+					
+		tab.add(sp);
+		tab.setTitleAt(tab.getTabCount()-1,title);
 	}
 	
 	public void openFile()
@@ -242,7 +269,7 @@ public class View
 		
 		//this.add(,BorderLayout.WEST);
 		this.add(tab,BorderLayout.CENTER);
-		this.add(createToolBar(), BorderLayout.WEST);
+		this.add(this.createToolBar(), BorderLayout.WEST);
 	}
 	
 	private void showFrame()

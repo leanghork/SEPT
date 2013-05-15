@@ -25,5 +25,25 @@ public class ActionController
 			gui.zoomIn();
 		if(e.getActionCommand().equals("zoomout"))
 			gui.zoomOut();		
+		if(e.getActionCommand().equals("select"))
+			;
+		if(e.getActionCommand().equals("circle"))
+			;	
+		if(e.getActionCommand().equals("rect"))
+			;
+		if(e.getActionCommand().equals("line"))
+			;
+		if(e.getActionCommand().equals("group"))
+			;
+		if(e.getActionCommand().equals("ungroup"))
+			;
+		if(e.getActionCommand().equals("delete"))
+			;
+		if(e.getActionCommand().equals("stroke"))
+			;
+		if(e.getActionCommand().equals("strokeWidth"))
+			;
+		if(e.getActionCommand().equals("fill"))
+			;
 	}
 }

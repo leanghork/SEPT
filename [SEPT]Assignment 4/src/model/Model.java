@@ -39,10 +39,18 @@ public class Model
 		
 		for(int i=0; i<svgFiles.size();i++)
 		{
-			board.add(new DrawingBoard(svgFiles.get(i)));
+			if(svgFiles.get(i)!=null)
+				board.add(new DrawingBoard(svgFiles.get(i)));
+			else
+				board.add(new DrawingBoard());
 		}
 		
 		return board;
+	}
+	
+	public void addEmptyBoard()
+	{
+		svgFiles.add(null);
 	}
 	
 	public boolean openFile(File f)
