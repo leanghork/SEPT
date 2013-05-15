@@ -20,7 +20,11 @@ public class View
 	public View(Model svg)
 	{
 		this.svg=svg;
-		
+		try {
+			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+		}
 		setMenu();
 		setTab();
 		addToFrame();
@@ -58,6 +62,68 @@ public class View
 		
 		menu.add(file);
 		menu.add(zoom);
+	}
+	
+	public JToolBar createToolBar()
+	{
+		JButton select,circle,rect,line,group,unGroup,delete,strokeCol,strokeWidth,fill;
+		
+		select = new JButton(new ImageIcon("src/icon/select.png"));
+		select.setToolTipText("Select");
+		
+		circle = new JButton(new ImageIcon("src/icon/draw-ellipse-icon.png"));
+		circle.setToolTipText("Draw Circle");
+		
+		rect = new JButton(new ImageIcon("src/icon/rect.png"));
+		rect.setToolTipText("Draw Rectangle");
+		
+		line = new JButton(new ImageIcon("src/icon/line.png"));
+		line.setToolTipText("Draw Line");
+		
+		group = new JButton(new ImageIcon("src/icon/group.png"));
+		group.setToolTipText("Group");
+		
+		unGroup = new JButton(new ImageIcon("src/icon/un.png"));
+		unGroup.setToolTipText("un-Group");
+		
+		delete = new JButton(new ImageIcon("src/icon/delete.png"));
+		delete.setToolTipText("Delete");
+		
+		strokeCol = new JButton(new ImageIcon("src/icon/strokeC.png"));
+		strokeCol.setToolTipText("Stroke Color");
+		
+		strokeWidth = new JButton(new ImageIcon("src/icon/strokeW.png"));
+		strokeWidth.setToolTipText("Stroke Width");
+		
+		fill = new JButton(new ImageIcon("src/icon/fill.png"));
+		fill.setToolTipText("Fill");
+		
+		select.setActionCommand("select");
+		circle.setActionCommand("circle");
+		rect.setActionCommand("rect");
+		line.setActionCommand("line");
+		group.setActionCommand("group");
+		unGroup.setActionCommand("unGroup");
+		delete.setActionCommand("delete");
+		strokeCol.setActionCommand("strokeCol");
+		strokeWidth.setActionCommand("strokeWidth");
+		fill.setActionCommand("fill");
+		
+		
+		JToolBar toolB = new JToolBar("Tools", SwingConstants.VERTICAL);
+		
+		toolB.add(select);
+		toolB.add(circle);
+		toolB.add(rect);
+		toolB.add(line);
+		toolB.add(group);
+		toolB.add(unGroup);
+		toolB.add(delete);
+		toolB.add(strokeWidth);
+		toolB.add(strokeCol);
+		toolB.add(fill);
+
+		return toolB;
 	}
 	
 	public void newFile()
@@ -176,6 +242,7 @@ public class View
 		
 		//this.add(,BorderLayout.WEST);
 		this.add(tab,BorderLayout.CENTER);
+		this.add(createToolBar(), BorderLayout.WEST);
 	}
 	
 	private void showFrame()
