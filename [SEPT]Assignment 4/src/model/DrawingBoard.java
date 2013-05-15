@@ -21,7 +21,7 @@ public class DrawingBoard
 	public static final int circle = 2;
 	public static final int line = 3;
 	
-	private int draw = clear;
+	private int draw = line;
 	static int count = 1;
 	Dimension size = null;
 	int zoom = 100;
@@ -33,7 +33,7 @@ public class DrawingBoard
 	{
 		svg = new File("New File "+(count++));
 		
-		//this.addMouseListener(new MouseController(this));
+		this.addMouseListener(new MouseController(this));
 	}
 	
 	public DrawingBoard(File f)
@@ -43,7 +43,7 @@ public class DrawingBoard
 		initSize();
 		setSize();
 		
-		//this.addMouseListener(new MouseController(this));
+		this.addMouseListener(new MouseController(this));
 	}
 	
 	public int getOption()
