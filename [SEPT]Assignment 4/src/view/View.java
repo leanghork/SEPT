@@ -21,6 +21,7 @@ public class View
 	public View(Model svg)
 	{
 		this.svg=svg;
+		svg.setGUI(this);
 		
 		setMenu();
 		setTab();
@@ -91,31 +92,37 @@ public class View
 		group.setToolTipText("Group");
 		group.setActionCommand("group");
 		group.setFocusable(false);
+		group.addActionListener(new ToolbarActionController(svg));
 		
 		JButton ungroup = new JButton(new ImageIcon("src/icon/un.png"));
 		ungroup.setToolTipText("ungroup");
 		ungroup.setActionCommand("ungroup");
 		ungroup.setFocusable(false);
+		ungroup.addActionListener(new ToolbarActionController(svg));
 		
 		JButton delete = new JButton(new ImageIcon("src/icon/delete.png"));
 		delete.setToolTipText("Delete");
 		delete.setActionCommand("delete");
 		delete.setFocusable(false);
+		delete.addActionListener(new ToolbarActionController(svg));
 		
 		JButton stroke = new JButton(new ImageIcon("src/icon/strokeC.png"));
 		stroke.setToolTipText("Stroke Color");
 		stroke.setActionCommand("stroke");
 		stroke.setFocusable(false);
+		stroke.addActionListener(new ToolbarActionController(svg));
 		
 		JButton strokeWidth = new JButton(new ImageIcon("src/icon/strokeW.png"));
 		strokeWidth.setToolTipText("Stroke Width");
 		strokeWidth.setActionCommand("strokeWidth");
 		strokeWidth.setFocusable(false);
+		strokeWidth.addActionListener(new ToolbarActionController(svg));
 		
 		JButton fill = new JButton(new ImageIcon("src/icon/fill.png"));
 		fill.setToolTipText("Fill");
 		fill.setActionCommand("fill");
 		fill.setFocusable(false);
+		fill.addActionListener(new ToolbarActionController(svg));
 		
 		JToolBar toolB = new JToolBar("Tools", SwingConstants.VERTICAL);
 		
@@ -274,6 +281,29 @@ public class View
 		this.setVisible(true);
 		this.setSize((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()-100,(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()-100);
 		this.setLocation(50,50);
+	}	
+	
+	public void removeSelected()
+	{
+		int index = tab.getSelectedIndex();
+		
+		JScrollPane sp = (JScrollPane)tab.getComponentAt(index);
+		JViewport vp = sp.getViewport();
+		System.out.println(vp.getView());
+		JPanel pane = (JPanel)vp.getView();
+ 		DrawingBoard db = (DrawingBoard)pane.getComponent(0);
+		db.remove();
 	}
 	
+	public void selectAll()
+	{
+		int index = tab.getSelectedIndex();
+		
+		JScrollPane sp = (JScrollPane)tab.getComponentAt(index);
+		JViewport vp = sp.getViewport();
+		System.out.println(vp.getView());
+		JPanel pane = (JPanel)vp.getView();
+ 		DrawingBoard db = (DrawingBoard)pane.getComponent(0);
+		db.selectAll();
+	}
 }

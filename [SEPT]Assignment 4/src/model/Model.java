@@ -1,5 +1,6 @@
 package model;
 
+import view.*;
 import java.util.*;
 import java.io.*;
 
@@ -15,6 +16,7 @@ public class Model
 	public static final int circle = 2;
 	public static final int line = 3;
 	
+	private View gui;
 	private int draw = clear;
 	private LinkedList<File> svgFiles = new LinkedList<File>();
 	
@@ -37,6 +39,11 @@ public class Model
 		
 		System.out.println("Size: "+svgFiles.size());
 	}
+	
+	public void setGUI(View gui)
+	{
+		this.gui = gui;
+	}
 		
 	public LinkedList<DrawingBoard> getBoard()
 	{
@@ -55,7 +62,7 @@ public class Model
 	{		
 		svgFiles.add(new File("New File "+Integer.toString(newFileCount++)));
 	}
-	
+		
 	public boolean openFile(File f)
 	{
 		if(checkFile(f))
@@ -104,5 +111,10 @@ public class Model
 	public int getOption()
 	{
 		return draw;
+	}
+	
+	public void remove()
+	{
+		gui.removeSelected();
 	}
 }

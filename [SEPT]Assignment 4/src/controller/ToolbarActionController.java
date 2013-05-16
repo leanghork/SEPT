@@ -29,7 +29,9 @@ public class ToolbarActionController
 		if(e.getActionCommand().equals("ungroup"))
 			;
 		if(e.getActionCommand().equals("delete"))
-			;
+		{
+			model.remove();
+		}
 		if(e.getActionCommand().equals("stroke"))
 			;
 		if(e.getActionCommand().equals("strokeWidth"))

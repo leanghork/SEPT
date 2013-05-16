@@ -33,6 +33,8 @@ public class KeyController
 		
 		if(ctrlHold && e.getKeyCode()==KeyEvent.VK_S)
 			gui.saveFile();
+		if(ctrlHold && e.getKeyCode()==KeyEvent.VK_A)
+			gui.selectAll();
 	}
 	
 	public void keyReleased(KeyEvent e)
